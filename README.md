@@ -114,28 +114,28 @@ python3 main.py ./data
 
 ### 방식 A: 대화형 메뉴
 ```bash
-python main.py
+python3 main.py
 ```
 
 ### 방식 B: CLI 명령어 실행
 ```bash
-python -m budget_app <명령> [옵션]
+python3 -m budget_app <명령> [옵션]
 ```
 
 ### 📋 명령어 목록
 
 | 명령 | 설명 | 예시 |
 |------|------|------|
-| `add` | 거래 추가 | `python -m budget_app add --type expense --amount 15000 --category 식비` |
-| `search` | 거래 검색 | `python -m budget_app search --type expense --category 식비` |
-| `summary` | 월별 요약 | `python -m budget_app summary --month 2025-01` |
-| `budget set` | 예산 설정 | `python -m budget_app budget set --month 2025-01 --amount 500000` |
-| `budget check` | 예산 확인 | `python -m budget_app budget check --month 2025-01` |
-| `category list` | 카테고리 목록 | `python -m budget_app category list` |
-| `category add` | 카테고리 추가 | `python -m budget_app category add 반려동물` |
-| `category remove` | 카테고리 삭제 | `python -m budget_app category remove 반려동물` |
-| `export` | CSV 내보내기 | `python -m budget_app export --file backup.csv` |
-| `import` | CSV 가져오기 | `python -m budget_app import --file backup.csv` |
+| `add` | 거래 추가 | `python3 -m budget_app add --type expense --amount 15000 --category 식비` |
+| `search` | 거래 검색 | `python3 -m budget_app search --type expense --category 식비` |
+| `summary` | 월별 요약 | `python3 -m budget_app summary --month 2025-01` |
+| `budget set` | 예산 설정 | `python3 -m budget_app budget set --month 2025-01 --amount 500000` |
+| `budget check` | 예산 확인 | `python3 -m budget_app budget check --month 2025-01` |
+| `category list` | 카테고리 목록 | `python3 -m budget_app category list` |
+| `category add` | 카테고리 추가 | `python3 -m budget_app category add 반려동물` |
+| `category remove` | 카테고리 삭제 | `python3 -m budget_app category remove 반려동물` |
+| `export` | CSV 내보내기 | `python3 -m budget_app export --file backup.csv` |
+| `import` | CSV 가져오기 | `python3 -m budget_app import --file backup.csv` |
 
 ### 🔧 공통 옵션
 
@@ -145,7 +145,7 @@ python -m budget_app <명령> [옵션]
 | `-h, --help` | 도움말 | - |
 
 > 💡 `--data-dir`는 명령어 **앞에** 위치해야 합니다.  
-> 예: `python -m budget_app --data-dir ./mydata search`
+> 예: `python3 -m budget_app --data-dir ./mydata search`
 
 ### 📌 add 명령 옵션 상세
 
@@ -168,7 +168,7 @@ python -m budget_app <명령> [옵션]
 
 ```bash
 # 종료 코드 확인 방법
-python -m budget_app add --type expense --amount 15000 --category 식비
+python3 -m budget_app add --type expense --amount 15000 --category 식비
 echo $?   # 0 이면 성공, 1 이면 오류
 ```
 
@@ -262,6 +262,6 @@ echo $?   # 0 이면 성공, 1 이면 오류
 
 > 💡 **전체 롤백이 필요한 경우**: import 전 `export` 명령으로 백업을 먼저 생성하세요.
 > ```bash
-> python -m budget_app export --file backup.csv   # 백업
-> python -m budget_app import --file new_data.csv # import
+> python3 -m budget_app export --file backup.csv   # 백업
+> python3 -m budget_app import --file new_data.csv # import
 > ```
