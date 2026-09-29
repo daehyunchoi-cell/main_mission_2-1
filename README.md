@@ -40,10 +40,10 @@ main_mission_2-1/
 cd main_mission_2-1
 
 # 2. 대화형 메뉴 실행 (data/ 폴더 자동 생성)
-python main.py
+python3 main.py
 
 # 3. 데이터 폴더 직접 지정 (선택사항)
-python main.py ./data
+python3 main.py ./data
 ```
 
 ---
@@ -114,12 +114,12 @@ python main.py ./data
 
 ### 방식 A: 대화형 메뉴
 ```bash
-python main.py
+python3 main.py
 ```
 
-### 방식 B: 명령줄 (argparse)
+### 방식 B: CLI 명령어 실행 
 ```bash
-python -m budget_app <명령> [옵션]
+python3 -m budget_app <명령> [옵션]
 ```
 
 ### 📋 명령어 목록
