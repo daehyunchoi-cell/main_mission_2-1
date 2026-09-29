@@ -1,0 +1,90 @@
+2026-09-28 13:50:49,993 [INFO] START search
+2026-09-28 13:50:49,994 [ERROR] search - Exception: 'TransactionRepository' object has no attribute 'search'
+2026-09-28 13:51:23,466 [INFO] START add_transaction
+2026-09-28 13:51:23,467 [ERROR] add_transaction - Exception: type object 'Validator' has no attribute 'category_exists'
+2026-09-28 13:51:30,630 [INFO] START search
+2026-09-28 13:51:30,631 [ERROR] search - Exception: 'TransactionRepository' object has no attribute 'search'
+2026-09-28 13:53:19,462 [INFO] START add_transaction
+2026-09-28 13:53:19,463 [ERROR] add_transaction - Exception: type object 'Validator' has no attribute 'category_exists'
+2026-09-28 13:55:35,303 [INFO] START add_transaction
+2026-09-28 13:55:35,306 [ERROR] add_transaction - Exception: type object 'Validator' has no attribute 'category_exists'
+2026-09-28 13:58:23,212 [INFO] START add_transaction
+2026-09-28 13:58:23,214 [ERROR] add_transaction - Exception: type object 'Validator' has no attribute 'transaction_type'
+2026-09-28 13:59:32,048 [INFO] START add_transaction
+2026-09-28 13:59:32,048 [ERROR] add_transaction - Exception: 1(수입) 또는 2(지출)을 선택하세요
+2026-09-28 14:03:06,401 [INFO] START add_transaction
+2026-09-28 14:03:06,403 [ERROR] add_transaction - Exception: 'TransactionRepository' object has no attribute 'save'
+2026-09-28 14:08:00,443 [INFO] START add_transaction
+2026-09-28 14:08:00,446 [INFO] END   add_transaction
+2026-09-28 14:08:07,641 [INFO] START search
+2026-09-28 14:08:07,643 [INFO] END   search
+2026-09-28 14:08:19,759 [INFO] START monthly_summary
+2026-09-28 14:08:19,770 [INFO] END   monthly_summary
+2026-09-28 14:08:55,301 [INFO] START add_transaction
+2026-09-28 14:08:55,304 [INFO] END   add_transaction
+2026-09-28 14:08:58,022 [INFO] START search
+2026-09-28 14:08:58,022 [INFO] END   search
+2026-09-29 11:57:08,910 [INFO] START add_transaction
+2026-09-29 11:57:08,913 [INFO] END   add_transaction
+2026-09-29 11:57:12,177 [INFO] START search
+2026-09-29 11:57:12,178 [INFO] END   search
+2026-09-29 11:57:35,831 [INFO] START search
+2026-09-29 11:57:35,833 [INFO] END   search
+2026-09-29 11:57:45,513 [INFO] START search
+2026-09-29 11:57:45,514 [INFO] END   search
+2026-09-29 11:58:15,211 [INFO] START update_transaction
+2026-09-29 11:58:15,215 [INFO] END   update_transaction
+2026-09-29 11:58:18,655 [INFO] START search
+2026-09-29 11:58:18,656 [INFO] END   search
+2026-09-29 11:58:29,115 [INFO] START monthly_summary
+2026-09-29 11:58:29,127 [INFO] END   monthly_summary
+2026-09-29 12:06:42,946 [INFO] START add_transaction
+2026-09-29 12:06:42,947 [INFO] END   add_transaction
+2026-09-29 12:06:51,932 [INFO] START search
+2026-09-29 12:06:51,932 [INFO] END   search
+2026-09-29 12:07:14,829 [INFO] START monthly_summary
+2026-09-29 12:07:14,832 [INFO] END   monthly_summary
+2026-09-29 12:07:27,737 [INFO] START set_budget
+2026-09-29 12:07:27,740 [INFO] END   set_budget
+2026-09-29 12:07:53,000 [INFO] START export_csv
+2026-09-29 12:07:53,001 [INFO] END   export_csv
+2026-09-29 12:11:36,040 [INFO] START import_csv
+2026-09-29 12:11:36,041 [INFO] START add_transaction
+2026-09-29 12:11:36,041 [INFO] END   add_transaction
+2026-09-29 12:11:36,041 [INFO] START add_transaction
+2026-09-29 12:11:36,041 [INFO] END   add_transaction
+2026-09-29 12:11:36,041 [INFO] START add_transaction
+2026-09-29 12:11:36,041 [INFO] END   add_transaction
+2026-09-29 12:11:36,041 [INFO] START add_transaction
+2026-09-29 12:11:36,041 [INFO] END   add_transaction
+2026-09-29 12:11:36,041 [INFO] END   import_csv
+2026-09-29 12:11:44,939 [INFO] START search
+2026-09-29 12:11:44,939 [INFO] END   search
+2026-09-29 12:26:53,964 [INFO] START add_transaction
+2026-09-29 12:26:53,964 [INFO] END   add_transaction
+2026-09-29 12:32:06,117 [INFO] START search
+2026-09-29 12:32:06,117 [INFO] END   search
+2026-09-29 12:32:30,394 [INFO] START add_transaction
+2026-09-29 12:32:30,395 [INFO] END   add_transaction
+2026-09-29 12:32:38,359 [INFO] START search
+2026-09-29 12:32:38,359 [INFO] END   search
+2026-09-29 12:32:46,730 [INFO] START monthly_summary
+2026-09-29 12:32:46,733 [INFO] END   monthly_summary
+2026-09-29 12:32:54,245 [INFO] START set_budget
+2026-09-29 12:32:54,249 [INFO] END   set_budget
+2026-09-29 12:33:16,881 [INFO] START export_csv
+2026-09-29 12:33:16,882 [INFO] END   export_csv
+2026-09-29 12:33:23,930 [INFO] START import_csv
+2026-09-29 12:33:23,930 [INFO] START add_transaction
+2026-09-29 12:33:23,931 [INFO] END   add_transaction
+2026-09-29 12:33:23,931 [INFO] START add_transaction
+2026-09-29 12:33:23,931 [INFO] END   add_transaction
+2026-09-29 12:33:23,931 [INFO] START add_transaction
+2026-09-29 12:33:23,931 [INFO] END   add_transaction
+2026-09-29 12:33:23,931 [INFO] START add_transaction
+2026-09-29 12:33:23,931 [INFO] END   add_transaction
+2026-09-29 12:33:23,931 [INFO] START add_transaction
+2026-09-29 12:33:23,931 [INFO] END   add_transaction
+2026-09-29 12:33:23,931 [INFO] START add_transaction
+2026-09-29 12:33:23,931 [INFO] END   add_transaction
+2026-09-29 12:33:23,932 [INFO] END   import_csv

@@ -1,0 +1,4 @@
+{"id": "5ed84454", "type": "income", "date": "2026-09-28", "amount": 30000000, "category": "용돈", "memo": "9월 용돈", "tags": ""}
+{"id": "5181ab28", "type": "income", "date": "2026-09-28", "amount": 300000, "category": "급여", "memo": "", "tags": ""}
+{"id": "10afde73", "type": "income", "date": "2026-09-29", "amount": 30000000, "category": "급여", "memo": "9월 용돈", "tags": ""}
+{"id": "5dd9c495", "type": "expense", "date": "2026-09-29", "amount": 15000, "category": "식비", "memo": "점심", "tags": "외식,회사"}
