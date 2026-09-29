@@ -114,12 +114,12 @@ python3 main.py ./data
 
 ### 방식 A: 대화형 메뉴
 ```bash
-python3 main.py
+python main.py
 ```
 
-### 방식 B: CLI 명령어 실행 
+### 방식 B: CLI 명령어 실행
 ```bash
-python3 -m budget_app <명령> [옵션]
+python -m budget_app <명령> [옵션]
 ```
 
 ### 📋 명령어 목록
@@ -128,9 +128,9 @@ python3 -m budget_app <명령> [옵션]
 |------|------|------|
 | `add` | 거래 추가 | `python -m budget_app add --type expense --amount 15000 --category 식비` |
 | `search` | 거래 검색 | `python -m budget_app search --type expense --category 식비` |
-| `summary` | 월별 요약 | `python -m budget_app summary --month 2026-09` |
-| `budget set` | 예산 설정 | `python -m budget_app budget set --month 2026-09 --amount 500000` |
-| `budget check` | 예산 확인 | `python -m budget_app budget check --month 2026-09` |
+| `summary` | 월별 요약 | `python -m budget_app summary --month 2025-01` |
+| `budget set` | 예산 설정 | `python -m budget_app budget set --month 2025-01 --amount 500000` |
+| `budget check` | 예산 확인 | `python -m budget_app budget check --month 2025-01` |
 | `category list` | 카테고리 목록 | `python -m budget_app category list` |
 | `category add` | 카테고리 추가 | `python -m budget_app category add 반려동물` |
 | `category remove` | 카테고리 삭제 | `python -m budget_app category remove 반려동물` |
@@ -144,13 +144,124 @@ python3 -m budget_app <명령> [옵션]
 | `--data-dir` | 데이터 폴더 경로 | `./data` |
 | `-h, --help` | 도움말 | - |
 
+> 💡 `--data-dir`는 명령어 **앞에** 위치해야 합니다.  
+> 예: `python -m budget_app --data-dir ./mydata search`
+
 ### 📌 add 명령 옵션 상세
 
 | 옵션 | 필수 | 설명 |
-|------|:---:|------|
+|------|------|------|
 | `--type` | ✅ | `income` 또는 `expense` |
 | `--amount` | ✅ | 금액 (정수) |
 | `--category` | ✅ | 카테고리명 |
 | `--memo` | | 메모 |
 | `--tags` | | 태그 (공백 구분, 여러 개 가능) |
 | `--date` | | 날짜 `YYYY-MM-DD` (기본: 오늘) |
+
+### ⚡ 종료 코드 정책
+
+| 코드 | 의미 |
+|------|------|
+| `0` | 정상 종료 |
+| `1` | 오류 발생 (검증 실패, 파일 오류 등) |
+| `130` | 사용자 강제 중단 (Ctrl+C) |
+
+```bash
+# 종료 코드 확인 방법
+python -m budget_app add --type expense --amount 15000 --category 식비
+echo $?   # 0 이면 성공, 1 이면 오류
+```
+
+---
+
+## 🤔 왜 JSONL을 선택했나?
+
+| 비교 항목 | JSONL ✅ | CSV |
+|-----------|---------|-----|
+| 중첩 데이터 (tags 배열) | 네이티브 지원 | `;` 연결 등 직렬화 필요 |
+| 거래 추가 | `append` O(1) | 헤더 관리 필요 |
+| 스트리밍 읽기 | 줄 단위 처리 용이 | 가능하나 파싱 복잡 |
+| 사람이 읽기 | 보통 | 쉬움 |
+| 부분 손상 복구 | 줄 단위 격리 | 전체 파일 영향 |
+
+**선택 이유:**
+- `tags`가 **배열 타입**이라 JSONL은 그대로 저장, CSV는 별도 직렬화 필요
+- 거래 **추가**가 `append` 한 줄로 끝나 원자성 확보가 쉬움
+- 줄 하나가 손상돼도 **나머지 데이터는 안전**
+- 단, CSV 호환을 위해 `export` / `import` 기능을 별도 제공
+
+---
+
+## 📈 대용량 데이터(10만 건) 성능 분석
+
+### 예상 병목 지점
+
+| 작업 | 현재 방식 | 병목 원인 | 개선 방향 |
+|------|-----------|-----------|-----------|
+| 검색 | 전체 파일 순회 O(n) | 매번 전체 읽음 | 월별 파일 분할 |
+| 수정/삭제 | 전체 파일 재작성 O(n) | 1건 수정에 전체 rewrite | 월별 샤딩으로 범위 축소 |
+| 월별 요약 | 전체 파일 순회 O(n) | 매번 전체 스캔 | 집계 캐시 파일 도입 |
+| ID 조회 | 전체 순회 O(n) | 인덱스 없음 | 인덱스 파일 도입 |
+| CSV import | 행마다 파일 열기 | I/O 반복 | 배치 버퍼링 |
+
+### 구체적 개선 방안
+
+#### 1️⃣ 월별 파일 샤딩
+```
+현재: transactions.jsonl (전체 데이터 1개 파일)
+개선: transactions-2025-01.jsonl
+      transactions-2025-02.jsonl  ...
+```
+- 검색/수정 범위를 **1/12로 축소**
+- 월별 요약 시 해당 월 파일만 읽으면 됨
+
+#### 2️⃣ 인덱스 파일 도입
+```json
+{"a1b2c3d4": {"file": "transactions-2025-01.jsonl", "line": 42}}
+```
+- `find_by_id` 가 O(n) → **O(1)**로 개선
+- 수정/삭제 시 전체 순회 불필요
+
+#### 3️⃣ 월별 집계 캐시
+```json
+{"month": "2025-01", "income": 3000000, "expense": 1250000, "by_category": {...}}
+```
+- 요약 조회 시 캐시 파일만 읽으면 됨 (**O(1)**)
+- 거래 추가/수정 시 캐시 갱신
+
+#### 4️⃣ 배치 버퍼링 (import)
+```
+현재: 행마다 add_transaction() 호출 → 파일 열기/닫기 반복
+개선: 전체 파싱 후 한 번에 append → I/O 횟수 대폭 감소
+```
+
+### 현재 구현의 강점
+- `stream_all()` 제너레이터로 **메모리는 O(1)** 유지
+- 10만 건 기준 메모리 사용량: 약 **수십 MB 이하** (한 줄씩 처리)
+- 병목은 **I/O 횟수**이며 메모리 부족은 발생하지 않음
+
+---
+
+## 📥 CSV import 실패 처리 정책
+
+### 정책: 부분 성공 허용 + 오류 리포트
+
+| 상황 | 처리 방식 |
+|------|-----------|
+| 정상 행 | 즉시 저장 |
+| 오류 행 | 건너뜀 + 오류 기록 |
+| 완료 후 | 성공/실패 건수 + 실패 행 번호 출력 |
+
+```
+예시 출력:
+  ✅ 98건 성공, ❌ 2건 실패
+  실패 상세:
+    3행: 금액은 1 이상이어야 합니다.
+    7행: 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD)
+```
+
+> 💡 **전체 롤백이 필요한 경우**: import 전 `export` 명령으로 백업을 먼저 생성하세요.
+> ```bash
+> python -m budget_app export --file backup.csv   # 백업
+> python -m budget_app import --file new_data.csv # import
+> ```

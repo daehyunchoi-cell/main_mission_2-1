@@ -270,30 +270,85 @@ class BudgetService:
     @handle_errors
     @log_action
     @measure_time
-    def import_csv(self, filepath: str) -> int:
-        """CSV에서 거래를 가져오기. 가져온 건수 반환."""
-        if not Path(filepath).exists():
-            raise ValidationError(f"파일을 찾을 수 없습니다: {filepath}")
+    def import_csv(self, filepath: str) -> dict:
+        """
+        CSV에서 거래를 가져오기.
 
-        count = 0
+        정책: 부분 성공 허용
+          - 정상 행은 즉시 저장
+          - 오류 행은 건너뛰고 오류 내용 기록
+          - 완료 후 성공/실패 건수 + 실패 행 상세 리포트 출력
+          - 전체 롤백이 필요하면 import 전 export로 백업 권장
+
+        Returns:
+            dict: {"success": int, "failed": int, "errors": list[str]}
+        """
+        if not Path(filepath).exists():
+            raise ValidationError(
+                f"파일을 찾을 수 없습니다: {filepath}\n"
+                "  💡 파일 경로를 다시 확인하세요."
+            )
+
+        # ── 필수 컬럼 검증 ──────────────────────────────
+        REQUIRED_COLUMNS = {"id", "type", "amount", "category", "memo", "tags", "date"}
+
+        success = 0
+        errors: list[str] = []                     # 실패 행 기록용
+
         with open(filepath, "r", newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
-            for row in reader:
-                # 태그 문자열 → 리스트 복원
-                tags = row["tags"].split(";") if row["tags"] else []
-                # 날짜 문자열 → date 객체
-                tx_date = date.fromisoformat(row["date"]) if row["date"] else None
 
-                # 기존 add_transaction 재사용 (검증까지 자동!)
-                self.add_transaction(
-                    type_    = row["type"],
-                    amount   = int(row["amount"]),
-                    category = row["category"],
-                    memo     = row["memo"] or None,
-                    tags     = tags,
-                    tx_date  = tx_date,
+            # ── 헤더 컬럼 검증 ──────────────────────
+            if reader.fieldnames is None:
+                raise ValidationError(
+                    "CSV 파일이 비어 있습니다.\n"
+                    "  💡 올바른 CSV 파일인지 확인하세요."
                 )
-                count += 1
 
-        print(f"  ✅ {count}건 가져오기 완료 ← {filepath}")
-        return count    
+            missing = REQUIRED_COLUMNS - set(reader.fieldnames)
+            if missing:
+                raise ValidationError(
+                    f"CSV 컬럼 누락: {', '.join(sorted(missing))}\n"
+                    f"  💡 필수 컬럼: {', '.join(sorted(REQUIRED_COLUMNS))}"
+                )
+
+            # ── 행별 처리 ────────────────────────────
+            for row_num, row in enumerate(reader, start=2):   # 헤더=1행, 데이터=2행~
+                try:
+                    # 태그 문자열 → 리스트 복원
+                    tags = [t for t in row["tags"].split(";") if t] \
+                            if row["tags"] else []
+
+                    # 날짜 문자열 → date 객체
+                    tx_date = date.fromisoformat(row["date"]) \
+                            if row["date"] else None
+
+                    # 기존 add_transaction 재사용 (검증까지 자동!)
+                    self.add_transaction(
+                        type_    = row["type"],
+                        amount   = int(row["amount"]),
+                        category = row["category"],
+                        memo     = row["memo"] or None,
+                        tags     = tags,
+                        tx_date  = tx_date,
+                    )
+                    success += 1
+
+                except (ValueError, ValidationError, KeyError) as e:
+                    # 오류 행은 건너뛰고 기록
+                    errors.append(f"  {row_num}행: {e}")
+
+        # ── 결과 리포트 출력 ─────────────────────────────
+        print(f"\n  📥 import 완료 ← {filepath}")
+        print(f"  ✅ {success}건 성공", end="")
+        if errors:
+            print(f"  |  ❌ {len(errors)}건 실패")
+            print("  ── 실패 상세 ──────────────────────")
+            for err in errors:
+                print(err)
+            print("  ───────────────────────────────────")
+            print("  💡 전체 롤백이 필요하면 import 전 export로 백업하세요.")
+        else:
+            print()   # 줄바꿈
+
+        return {"success": success, "failed": len(errors), "errors": errors}
